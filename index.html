@@ -4,68 +4,124 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Verdansk Easter Eggs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e1116; --card: #171c24; --line: #2a3340;
-    --text: #e8edf4; --muted: #8b97a8; --accent: #3d8bfd; --done: #3ecf8e;
+    --bg: #070b10;
+    --card: #121922;
+    --card2: #182230;
+    --line: #243140;
+    --text: #e7eef6;
+    --muted: #8ea0b5;
+    --accent: #4aa3ff;
+    --done: #3dcc8a;
+    --gold: #e2b657;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg); color: var(--text); padding: 16px 14px 48px;
+    margin: 0;
+    font-family: Barlow, -apple-system, sans-serif;
+    background:
+      radial-gradient(900px 420px at 10% -10%, #16324f 0%, transparent 55%),
+      radial-gradient(700px 380px at 100% 0%, #1a2a1c 0%, transparent 50%),
+      var(--bg);
+    color: var(--text);
+    padding: 22px 16px 64px;
   }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; line-height: 1.4; }
-  .bar-wrap { background: #222833; border-radius: 999px; height: 10px; overflow: hidden; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .kicker {
+    letter-spacing: .22em; font-size: 11px; color: var(--accent); font-weight: 600;
+  }
+  h1 {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 40px; line-height: .9; margin: 6px 0 8px; letter-spacing: .02em;
+  }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+  .hero {
+    display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center;
+    background: linear-gradient(180deg, #182433, #101820);
+    border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+    box-shadow: 0 16px 40px #0006;
+  }
+  .ring { width: 92px; height: 92px; }
+  .stats { display: flex; justify-content: space-between; align-items: end; gap: 8px; }
+  .count { font-family: "Barlow Condensed", sans-serif; font-size: 34px; line-height: 1; }
+  .badge {
+    font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px;
+    background: #1d3148; color: var(--accent);
+  }
+  .badge.ok { background: #143526; color: var(--done); }
+  .badge.gold { background: #3a3018; color: var(--gold); }
+  .track { margin-top: 10px; height: 8px; border-radius: 999px; background: #0c1218; overflow: hidden; }
   .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--done)); }
-  .stats { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 12px; font-size: 14px; gap: 8px; }
-  .badge { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: #243044; color: var(--accent); }
-  .badge.ok { background: #163528; color: var(--done); }
-  .row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .marks { display: flex; gap: 10px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .marks b { color: var(--text); font-weight: 600; }
+  .row { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
   button {
-    background: var(--card); color: var(--text); border: 1px solid var(--line);
-    border-radius: 10px; padding: 8px 12px; font-size: 13px;
+    background: #121a24; color: var(--text); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 14px; font: 600 13px Barlow, sans-serif;
   }
-  button.active { border-color: var(--accent); color: var(--accent); }
+  button.active { background: #17304a; border-color: #3d78b8; color: #d7ebff; }
+  button.primary { margin-left: auto; background: #17304a; border-color: #3d78b8; }
   ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-  li.done { opacity: .7; }
-  li.done .name { text-decoration: line-through; }
-  .head { display: flex; gap: 10px; align-items: flex-start; padding: 12px; }
-  input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--done); flex: none; }
-  .num { color: var(--muted); font-size: 12px; min-width: 20px; padding-top: 4px; }
-  .name { font-weight: 600; }
-  .where { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  li {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+  }
+  li.done { background: #101a16; }
+  li.done .name { color: #9eb8aa; text-decoration: line-through; }
+  .head { display: flex; gap: 12px; align-items: center; padding: 12px 12px 12px 14px; }
+  .num {
+    width: 28px; color: var(--muted); font-family: "Barlow Condensed", sans-serif;
+    font-size: 18px; flex: none;
+  }
+  input { width: 22px; height: 22px; accent-color: var(--done); flex: none; }
+  .name { font-weight: 600; font-size: 16px; }
+  .where {
+    display: inline-block; margin-top: 3px; font-size: 12px; color: #c9d7ea;
+    background: #243246; border-radius: 999px; padding: 2px 8px;
+  }
+  li.done .where { background: #1c3328; color: #b7d8c6; }
+  .toggle {
+    margin-left: auto; width: 32px; height: 32px; border-radius: 10px; padding: 0; color: var(--muted);
+  }
   .more {
-    display: none; padding: 0 12px 12px 54px; color: #c5d0de; font-size: 13px; line-height: 1.45;
+    display: none; padding: 0 14px 14px 76px; color: #c5d3e2; font-size: 14px; line-height: 1.45;
   }
   li.open .more { display: block; }
-  .toggle {
-    margin-left: auto; background: transparent; border: 0; color: var(--muted); padding: 4px 2px; font-size: 18px;
-  }
+  li.open .toggle { transform: rotate(90deg); }
   #toast {
     position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-    background: #12261c; color: var(--done); border: 1px solid #1f6b45;
-    padding: 8px 12px; border-radius: 10px; font-size: 13px; display: none;
+    background: #123224; color: var(--done); border: 1px solid #1f6b45;
+    padding: 10px 14px; border-radius: 12px; font-size: 13px; display: none;
   }
 </style>
 </head>
 <body>
-  <h1>Verdansk Easter Eggs</h1>
-  <div class="sub">Police computer list. Tap a row for steps. Share link keeps your checks.</div>
-  <div class="bar-wrap"><div class="bar" id="bar"></div></div>
-  <div class="stats">
-    <span id="count">0 / 30</span>
-    <span class="badge" id="reward">Need 15</span>
+  <div class="wrap">
+    <div class="kicker">WARZONE · VERDANSK</div>
+    <h1>EASTER EGGS</h1>
+    <div class="sub">Police computer list. Tap a row for the step.</div>
+    <div class="hero">
+      <svg class="ring" viewBox="0 0 92 92" id="ring"></svg>
+      <div>
+        <div class="stats">
+          <div class="count" id="count">0/30</div>
+          <span class="badge" id="reward">Need 15</span>
+        </div>
+        <div class="track"><div class="bar" id="bar"></div></div>
+        <div class="marks"><span>15 <b>care package</b></span><span>30 <b>extra cash</b></span></div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="active" data-f="all">All</button>
+      <button data-f="open">Open</button>
+      <button data-f="done">Done</button>
+      <button class="primary" id="share">Copy link</button>
+      <button id="reset">Reset</button>
+    </div>
+    <ul id="list"></ul>
   </div>
-  <div class="row">
-    <button class="active" data-f="all">All</button>
-    <button data-f="open">Open</button>
-    <button data-f="done">Done</button>
-    <button id="share">Copy link</button>
-    <button id="reset">Reset</button>
-  </div>
-  <ul id="list"></ul>
   <div id="toast">Link copied</div>
 <script>
 const items = [
@@ -104,7 +160,6 @@ const KEY = "verdansk-ee-v2";
 let done = [];
 let filter = "all";
 let open = new Set();
-
 function fromHash() {
   const h = location.hash.replace("#", "");
   if (!h) return null;
@@ -122,8 +177,11 @@ function toHash() {
 const hashed = fromHash();
 done = hashed || JSON.parse(localStorage.getItem(KEY) || "[]");
 function save() { localStorage.setItem(KEY, JSON.stringify(done)); history.replaceState(null, "", toHash()); }
-
 const list = document.getElementById("list");
+function ring(n) {
+  const p = n / 30, c = 2 * Math.PI * 36, d = c * (1 - p);
+  document.getElementById("ring").innerHTML = `<circle cx="46" cy="46" r="36" fill="none" stroke="#0c1218" stroke-width="8"/><circle cx="46" cy="46" r="36" fill="none" stroke="${n>=30?'#e2b657':n>=15?'#3dcc8a':'#4aa3ff'}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${d}" transform="rotate(-90 46 46)"/><text x="46" y="51" text-anchor="middle" fill="#e7eef6" font-size="18" font-family="Barlow Condensed, sans-serif">${n}</text>`;
+}
 function render() {
   list.innerHTML = "";
   items.forEach((it, i) => {
@@ -148,12 +206,13 @@ function render() {
     list.appendChild(li);
   });
   const n = done.length;
-  document.getElementById("count").textContent = n + " / 30";
+  document.getElementById("count").textContent = n + "/30";
   document.getElementById("bar").style.width = (n / 30 * 100) + "%";
+  ring(n);
   const badge = document.getElementById("reward");
-  if (n >= 30) { badge.textContent = "30/30 extra cash"; badge.className = "badge ok"; }
-  else if (n >= 15) { badge.textContent = "Care package unlocked"; badge.className = "badge ok"; }
-  else { badge.textContent = (15 - n) + " to care package"; badge.className = "badge"; }
+  if (n >= 30) { badge.textContent = "Extra cash"; badge.className = "badge gold"; }
+  else if (n >= 15) { badge.textContent = "Care package"; badge.className = "badge ok"; }
+  else { badge.textContent = (15 - n) + " to package"; badge.className = "badge"; }
 }
 document.querySelectorAll("[data-f]").forEach(b => b.onclick = () => {
   filter = b.dataset.f;
