@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verdansk Easter Eggs</title>
+<style>
+  :root {
+    --bg: #0e1116; --card: #171c24; --line: #2a3340;
+    --text: #e8edf4; --muted: #8b97a8; --accent: #3d8bfd; --done: #3ecf8e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg); color: var(--text); padding: 16px 14px 48px;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; line-height: 1.4; }
+  .bar-wrap { background: #222833; border-radius: 999px; height: 10px; overflow: hidden; }
+  .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--done)); }
+  .stats { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 12px; font-size: 14px; gap: 8px; }
+  .badge { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: #243044; color: var(--accent); }
+  .badge.ok { background: #163528; color: var(--done); }
+  .row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  button {
+    background: var(--card); color: var(--text); border: 1px solid var(--line);
+    border-radius: 10px; padding: 8px 12px; font-size: 13px;
+  }
+  button.active { border-color: var(--accent); color: var(--accent); }
+  ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  li.done { opacity: .7; }
+  li.done .name { text-decoration: line-through; }
+  .head { display: flex; gap: 10px; align-items: flex-start; padding: 12px; }
+  input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--done); flex: none; }
+  .num { color: var(--muted); font-size: 12px; min-width: 20px; padding-top: 4px; }
+  .name { font-weight: 600; }
+  .where { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .more {
+    display: none; padding: 0 12px 12px 54px; color: #c5d0de; font-size: 13px; line-height: 1.45;
+  }
+  li.open .more { display: block; }
+  .toggle {
+    margin-left: auto; background: transparent; border: 0; color: var(--muted); padding: 4px 2px; font-size: 18px;
+  }
+  #toast {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    background: #12261c; color: var(--done); border: 1px solid #1f6b45;
+    padding: 8px 12px; border-radius: 10px; font-size: 13px; display: none;
+  }
+</style>
+</head>
+<body>
+  <h1>Verdansk Easter Eggs</h1>
+  <div class="sub">Police computer list. Tap a row for steps. Share link keeps your checks.</div>
+  <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+  <div class="stats">
+    <span id="count">0 / 30</span>
+    <span class="badge" id="reward">Need 15</span>
+  </div>
+  <div class="row">
+    <button class="active" data-f="all">All</button>
+    <button data-f="open">Open</button>
+    <button data-f="done">Done</button>
+    <button id="share">Copy link</button>
+    <button id="reset">Reset</button>
+  </div>
+  <ul id="list"></ul>
+  <div id="toast">Link copied</div>
+<script>
+const items = [
+  ["Destruction of Verdansk", "Stadium, outside", "Interact with the note next to the unexploded nuke on the ground outside Stadium, at the original detonation spot."],
+  ["Secrets of the Pacific", "Prison, Gulag showers", "Go into the Gulag showers under Prison. Interact with the ping pong paddle on the bench."],
+  ["Roze Was Here", "Lozoff Pass", "Climb the stairwell in the Lozoff Pass building (right stairs, upper floors). Interact with the Roze was here graffiti."],
+  ["Red Door", "Quarry", "Find the red door building at Quarry and interact with it. A shovel for the graveyard often spawns here."],
+  ["Hunt For Adler", "Hospital", "Also called Tortured and Rescued. Enter Hospital through the side window, go through the door, turn right. Read the note on the bed next to Stitch's phone."],
+  ["Loadout Drop", "Boneyard", "Also called Heads Up. At Boneyard, find the crashed loadout crate with a body under it. Read the note. A blue SMG usually spawns here."],
+  ["Vodianoy Shipwreck", "Coast, shipwreck", "Go to the zombie shipwreck from the Haunting of Verdansk. Interact with the note on the wreck."],
+  ["5th Anniversary Exhibition", "Exhibit note", "Find and read the 5th anniversary exhibit note. It says the display gear is inoperable and not for testing."],
+  ["Vintage Wine", "Building by a police station", "Find the wine bottle on a shelf in the building next to a police station. Twist it. Cash drops, then read the note."],
+  ["Secret Storage Unit", "Storage Town", "Open the secret locked storage unit in Storage Town and interact with the intel inside."],
+  ["Bank Vault", "Bank", "Use the biometric scanner in the Bank to get a Hardware Gift Card. Buy the Bit Drill at a buy station, place it on the vault door, then loot the cash."],
+  ["Graveyard", "Graveyard", "Pick up the shovel at the Red Door in Quarry, or near the bottom of Stadium. Dig the marked statue or grave in the graveyard."],
+  ["Sea Treasures", "Boats, then Promenade", "Pick up a Sea Token from a boat (near the shipwreck, behind Prison, or the south coast). Deposit it in the coin machine at the Promenade gas station."],
+  ["Floating Doors", "Prison, then I8 water", "Find the floating-doors paper in a random Prison cell and photo the circled order. Go to the marked spot behind Prison (often I8). Shoot the sky doors smallest circle to largest. A supply drop lands."],
+  ["Airport Subway Station", "Airport", "Go into the Airport subway station and interact with the Next Stop intel to complete it."],
+  ["Prison Shed", "Prison, code 13584927", "Keypad on the prison shed. Code 13584927. Guaranteed legendary crate inside."],
+  ["TV Station Shed", "TV Station, code 01859472", "Keypad on the TV Station shed. Code 01859472."],
+  ["Farmland Secret Room", "Farmland, code 36158294", "Keypad on the Farmland locked room. Code 36158294."],
+  ["Bunker 0", "South of Hills, 01011000", "Coastline south of Hills. Code 01011000 (binary X). Enter the bunker."],
+  ["Bunker 1", "By Boneyard, 04222021", "Mountains by Boneyard. Code 04222021. Enter the bunker."],
+  ["Bunker 2", "Northeast of Boneyard", "Blue access card. Card is random from crates and players."],
+  ["Bunker 3", "West of Storage Town, 30198805", "Code 30198805. Enter the bunker."],
+  ["Bunker 4", "Dam", "Red access card. Card is random from crates and players."],
+  ["Bunker 5", "South of Military Base", "Red access card."],
+  ["Bunker 6", "East of Quarry", "Red access card."],
+  ["Bunker 7", "Northwest of Stadium", "Blue access card."],
+  ["Bunker 8", "Northwest of Stadium", "Blue access card. Near TV Station side of Stadium."],
+  ["Bunker 9", "Prison", "Red access card."],
+  ["Bunker 10", "Park, 31547206", "South of the park. Code 31547206. Enter the bunker."],
+  ["Bunker 11", "North of Military Base", "Turn subtitles on. Find a phone that reads three Russian numbers. Hit the numbered phones in that order, then interact with the Bunker 11 keypad. No code to type."]
+];
+const KEY = "verdansk-ee-v2";
+let done = [];
+let filter = "all";
+let open = new Set();
+
+function fromHash() {
+  const h = location.hash.replace("#", "");
+  if (!h) return null;
+  try {
+    const raw = atob(h.replace(/-/g, "+").replace(/_/g, "/"));
+    return raw.split(",").filter(Boolean).map(Number);
+  } catch { return null; }
+}
+const PUBLIC = "https://cdn.jsdelivr.net/gh/ippodrome/verdansk-ee@main/index.html";
+function toHash() {
+  const raw = btoa(done.slice().sort((a, b) => a - b).join(",")).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const hosted = location.protocol === "http:" || location.protocol === "https:";
+  return (hosted ? location.origin + location.pathname : PUBLIC) + "#" + raw;
+}
+const hashed = fromHash();
+done = hashed || JSON.parse(localStorage.getItem(KEY) || "[]");
+function save() { localStorage.setItem(KEY, JSON.stringify(done)); history.replaceState(null, "", toHash()); }
+
+const list = document.getElementById("list");
+function render() {
+  list.innerHTML = "";
+  items.forEach((it, i) => {
+    const on = done.includes(i);
+    if (filter === "open" && on) return;
+    if (filter === "done" && !on) return;
+    const li = document.createElement("li");
+    if (on) li.classList.add("done");
+    if (open.has(i)) li.classList.add("open");
+    li.innerHTML = `<div class="head"><span class="num">${i + 1}</span><input type="checkbox" ${on ? "checked" : ""}><div><div class="name"></div><div class="where"></div></div><button class="toggle" aria-label="Details">›</button></div><div class="more"></div>`;
+    li.querySelector(".name").textContent = it[0];
+    li.querySelector(".where").textContent = it[1];
+    li.querySelector(".more").textContent = it[2];
+    li.querySelector("input").addEventListener("change", e => {
+      e.stopPropagation();
+      if (e.target.checked) { if (!done.includes(i)) done.push(i); }
+      else done = done.filter(n => n !== i);
+      save(); render();
+    });
+    li.querySelector(".toggle").onclick = e => { e.stopPropagation(); open.has(i) ? open.delete(i) : open.add(i); render(); };
+    li.querySelector(".head").onclick = ev => { if (ev.target.tagName === "INPUT") return; open.has(i) ? open.delete(i) : open.add(i); render(); };
+    list.appendChild(li);
+  });
+  const n = done.length;
+  document.getElementById("count").textContent = n + " / 30";
+  document.getElementById("bar").style.width = (n / 30 * 100) + "%";
+  const badge = document.getElementById("reward");
+  if (n >= 30) { badge.textContent = "30/30 extra cash"; badge.className = "badge ok"; }
+  else if (n >= 15) { badge.textContent = "Care package unlocked"; badge.className = "badge ok"; }
+  else { badge.textContent = (15 - n) + " to care package"; badge.className = "badge"; }
+}
+document.querySelectorAll("[data-f]").forEach(b => b.onclick = () => {
+  filter = b.dataset.f;
+  document.querySelectorAll("[data-f]").forEach(x => x.classList.toggle("active", x === b));
+  render();
+});
+document.getElementById("share").onclick = async () => {
+  const url = toHash();
+  try { await navigator.clipboard.writeText(url); } catch { prompt("Copy link", url); }
+  const t = document.getElementById("toast");
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 1400);
+};
+document.getElementById("reset").onclick = () => {
+  if (confirm("Clear all marks?")) { done = []; open.clear(); save(); render(); }
+};
+save();
+render();
+</script>
+</body>
+</html>
