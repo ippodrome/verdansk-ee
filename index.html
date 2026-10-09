@@ -113,7 +113,7 @@ function fromHash() {
     return raw.split(",").filter(Boolean).map(Number);
   } catch { return null; }
 }
-const PUBLIC = "https://cdn.jsdelivr.net/gh/ippodrome/verdansk-ee@main/index.html";
+const PUBLIC = "https://htmlpreview.github.io/?https://raw.githubusercontent.com/ippodrome/verdansk-ee/main/index.html";
 function toHash() {
   const raw = btoa(done.slice().sort((a, b) => a - b).join(",")).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   const hosted = location.protocol === "http:" || location.protocol === "https:";
